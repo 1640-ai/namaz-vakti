@@ -1,5 +1,7 @@
 # Namaz Vakti
 
+[![NamazVakti.app indir](https://img.shields.io/badge/NamazVakti.app-%C4%B0ndir-1b7f5c?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/1640-ai/namaz-vakti/releases/latest/download/NamazVakti.zip)
+
 macOS menü çubuğunda bir sonraki namaza kalan süreyi gösterir. Saat, dakika ve saniye olarak.
 
 Vakitler Diyanet İşleri Başkanlığı verisine dayanır.
@@ -34,7 +36,7 @@ Kod: Swift, AppKit ve SwiftUI. Dış kütüphane yoktur.
 
 ## Kurulum
 
-1. [Releases](../../releases) sayfasından `NamazVakti.zip` dosyasını indir.
+1. Yukarıdaki **İndir** düğmesine bas. `NamazVakti.zip` dosyası iner.
 2. Zip'i aç. `NamazVakti.app` dosyasını `Uygulamalar` klasörüne sürükle.
 3. İlk açılışta `NamazVakti.app` üzerine sağ tıkla. `Aç` seç.
 
