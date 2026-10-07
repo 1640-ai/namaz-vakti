@@ -11,6 +11,8 @@ struct AnaGorunum: View {
             Divider()
             konumSecimi
             Divider()
+            alarmBolumu
+            Divider()
             ayarlar
             kredi
         }
@@ -26,6 +28,7 @@ struct AnaGorunum: View {
             Text(store.kalan)
                 .font(.system(size: 34, weight: .semibold, design: .rounded))
                 .monospacedDigit()
+                .foregroundStyle(store.uyariRengi.map { Color(nsColor: $0) } ?? Color.primary)
             if let durum = store.durum {
                 Text(durum).font(.caption).foregroundStyle(.red)
             }
@@ -78,6 +81,35 @@ struct AnaGorunum: View {
                 ForEach(secenekler) { Text(ad($0)).tag($0) }
             }
             .labelsHidden()
+        }
+    }
+
+    private var alarmBolumu: some View {
+        DisclosureGroup("Alarmlar") {
+            VStack(spacing: 6) {
+                ForEach(Store.vakitSirasi, id: \.self) { ad in
+                    let ayar = store.alarm(ad)
+                    HStack {
+                        Toggle(ad, isOn: Binding(
+                            get: { ayar.acik },
+                            set: { var a = ayar; a.acik = $0; store.alarmDegistir(ad, a) }
+                        ))
+                        Spacer()
+                        Picker("Dakika", selection: Binding(
+                            get: { ayar.dakika },
+                            set: { var a = ayar; a.dakika = $0; store.alarmDegistir(ad, a) }
+                        )) {
+                            ForEach(Store.alarmSecenekleri, id: \.self) { dk in
+                                Text(dk == 0 ? "Vakitte" : "\(dk) dk önce").tag(dk)
+                            }
+                        }
+                        .labelsHidden()
+                        .frame(width: 110)
+                        .disabled(!ayar.acik)
+                    }
+                }
+            }
+            .padding(.top, 6)
         }
     }
 

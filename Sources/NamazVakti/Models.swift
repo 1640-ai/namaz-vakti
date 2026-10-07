@@ -60,3 +60,8 @@ extension String {
             .trimmingCharacters(in: .whitespaces)
     }
 }
+
+struct AlarmAyar: Codable, Equatable {
+    var acik = false
+    var dakika = 15
+}

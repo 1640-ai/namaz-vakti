@@ -1,5 +1,7 @@
 import Foundation
+import AppKit
 import ServiceManagement
+import UserNotifications
 
 @MainActor
 final class Store: ObservableObject {
@@ -20,6 +22,9 @@ final class Store: ObservableObject {
     @Published var sehirler: [Sehir] = []
     @Published var ilceler: [Ilce] = []
     @Published var durum: String?
+    @Published var alarmlar: [String: AlarmAyar] = [:]
+    static let alarmSecenekleri = [0, 5, 10, 15, 20, 30, 45, 60]
+    static let vakitSirasi = ["İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"]
 
     private let ud = UserDefaults.standard
     private var sonYenileme = Date.distantPast
@@ -32,6 +37,10 @@ final class Store: ObservableObject {
             konum = Store.varsayilan
         }
         otomatik = ud.bool(forKey: "otomatik")
+        if let veri = ud.data(forKey: "alarmlar"),
+           let a = try? JSONDecoder().decode([String: AlarmAyar].self, from: veri) {
+            alarmlar = a
+        }
         acilistaBaslat = SMAppService.mainApp.status == .enabled
         if let veri = ud.data(forKey: "gunler_\(konum.ilce.IlceID)"),
            let g = try? JSONDecoder().decode([GunlukVakit].self, from: veri) {
@@ -47,6 +56,7 @@ final class Store: ObservableObject {
 
     private func tik() {
         simdi = Date()
+        alarmlariKontrolEt()
         if simdi.timeIntervalSince(sonYenileme) > 6 * 3600 || gunler.isEmpty && simdi.timeIntervalSince(sonYenileme) > 60 {
             Task { await vakitleriYenile() }
         }
@@ -110,6 +120,16 @@ final class Store: ObservableObject {
         guard let s = siradaki else { return "--:--:--" }
         let t = max(0, Int(s.zaman.timeIntervalSince(simdi).rounded(.up)))
         return String(format: "%02d:%02d:%02d", t / 3600, t % 3600 / 60, t % 60)
+    }
+
+    /// Kalan süreye göre uyarı rengi: 45 dk sarı, 30 dk turuncu, 15 dk kırmızı.
+    var uyariRengi: NSColor? {
+        guard let s = siradaki else { return nil }
+        let dk = s.zaman.timeIntervalSince(simdi) / 60
+        if dk < 15 { return .systemRed }
+        if dk < 30 { return .systemOrange }
+        if dk < 45 { return .systemYellow }
+        return nil
     }
 
     var menuMetni: String {
@@ -198,6 +218,59 @@ final class Store: ObservableObject {
         } catch {
             durum = "Konum bulunamadı. İnternet bağlantısını kontrol et."
         }
+    }
+
+    // MARK: Alarmlar
+
+    func alarm(_ ad: String) -> AlarmAyar { alarmlar[ad] ?? AlarmAyar() }
+
+    func alarmDegistir(_ ad: String, _ ayar: AlarmAyar) {
+        alarmlar[ad] = ayar
+        if let veri = try? JSONEncoder().encode(alarmlar) { ud.set(veri, forKey: "alarmlar") }
+        if ayar.acik { Task { await bildirimIzniIste() } }
+    }
+
+    private func bildirimIzniIste() async {
+        guard Bundle.main.bundleIdentifier != nil else { return }
+        let merkez = UNUserNotificationCenter.current()
+        _ = try? await merkez.requestAuthorization(options: [.alert, .sound])
+        let ayar = await merkez.notificationSettings()
+        durum = ayar.authorizationStatus == .denied
+            ? "Bildirim izni kapalı. Sistem Ayarları > Bildirimler bölümünden aç."
+            : nil
+    }
+
+    private func alarmlariKontrolEt() {
+        var tetiklenen = Set(ud.stringArray(forKey: "tetiklenen") ?? [])
+        var degisti = false
+        for v in hepsi {
+            let ayar = alarm(v.ad)
+            guard ayar.acik else { continue }
+            let tetik = v.zaman.addingTimeInterval(-Double(ayar.dakika) * 60)
+            let anahtar = "\(v.ad)-\(Int(v.zaman.timeIntervalSince1970))-\(ayar.dakika)"
+            guard simdi >= tetik, simdi < max(v.zaman, tetik.addingTimeInterval(60)),
+                  !tetiklenen.contains(anahtar) else { continue }
+            tetiklenen.insert(anahtar)
+            degisti = true
+            bildirimGonder(ad: v.ad, dakika: ayar.dakika)
+        }
+        if degisti {
+            let sinir = Int(simdi.timeIntervalSince1970) - 86_400
+            let son = tetiklenen.filter { Int($0.split(separator: "-")[1]) ?? 0 > sinir }
+            ud.set(Array(son), forKey: "tetiklenen")
+        }
+    }
+
+    private func bildirimGonder(ad: String, dakika: Int) {
+        let metin = dakika == 0 ? "\(ad) vakti girdi" : "\(ad) vaktine \(dakika) dakika kaldı"
+        NSSound(named: "Glass")?.play()
+        guard Bundle.main.bundleIdentifier != nil else { return }
+        let icerik = UNMutableNotificationContent()
+        icerik.title = "Namaz Vakti"
+        icerik.body = metin
+        icerik.sound = .default
+        UNUserNotificationCenter.current().add(
+            UNNotificationRequest(identifier: UUID().uuidString, content: icerik, trigger: nil))
     }
 
     // MARK: Açılışta başlat

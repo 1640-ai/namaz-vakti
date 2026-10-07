@@ -25,7 +25,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func basligiGuncelle() {
         let font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
-        statusItem.button?.attributedTitle = NSAttributedString(string: store.menuMetni, attributes: [.font: font])
+        var ozellik: [NSAttributedString.Key: Any] = [.font: font]
+        if let renk = store.uyariRengi { ozellik[.foregroundColor] = renk }
+        statusItem.button?.attributedTitle = NSAttributedString(string: store.menuMetni, attributes: ozellik)
     }
 
     @objc private func degistir() {

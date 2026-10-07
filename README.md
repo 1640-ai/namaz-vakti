@@ -27,6 +27,8 @@ Kod: Swift, AppKit ve SwiftUI. Dış kütüphane yoktur.
 ## Özellikler
 
 - Menü çubuğunda geri sayım: `İkindi 01:23:45`
+- Renk uyarısı: 45 dk kalınca sarı, 30 dk kalınca turuncu, 15 dk kalınca kırmızı
+- Alarm: her vakit için aç/kapat ve kaç dakika önce çalacağını seç (bildirim + ses)
 - Tıklayınca açılır pencere: bugünün vakitleri
 - Ülke, şehir ve ilçe seçimi
 - İsteğe bağlı otomatik konum (internet bağlantısından, IP ile)
