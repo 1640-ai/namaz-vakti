@@ -87,7 +87,7 @@ struct AnaGorunum: View {
                 set: { store.acilistaBaslatAyarla($0) }
             ))
             HStack {
-                Text("Veri: Diyanet İşleri Başkanlığı")
+                Text("Diyanet verisi · resmi olmayan uygulama")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()

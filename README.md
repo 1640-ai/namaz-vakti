@@ -2,7 +2,9 @@
 
 macOS menü çubuğunda bir sonraki namaza kalan süreyi gösterir. Saat, dakika ve saniye olarak.
 
-Vakitler Diyanet İşleri Başkanlığı verisidir.
+Vakitler Diyanet İşleri Başkanlığı verisine dayanır.
+
+> Bu proje resmi değildir. Diyanet İşleri Başkanlığı ile bağlantısı yoktur.
 
 ## Amaç
 
@@ -60,8 +62,9 @@ Bu servisler IP adresini görür. Uygulama ad, e-posta veya başka kişisel veri
 
 ## Veri kaynağı
 
-Uygulama Diyanet verisini açık bir yansıma API'sinden alır: `ezanvakti.emushaf.net`.
-Şehir ve ilçe kodları Diyanet ile aynıdır.
+Uygulama vakitleri üçüncü kişinin işlettiği bir yansıma API'sinden alır: `ezanvakti.emushaf.net`.
+Veri Diyanet İşleri Başkanlığı kaynaklıdır. Şehir ve ilçe kodları Diyanet ile aynıdır.
+Bu servis resmi değildir. Kapanabilir veya değişebilir. Vakitler resmi siteden farklı çıkarsa resmi site geçerlidir: https://namazvakti.diyanet.gov.tr
 Otomatik konum için `ipwho.is` servisi IP adresinden şehri bulur. Bu özellik kapalıyken konum istenmez.
 
 ## Lisans
