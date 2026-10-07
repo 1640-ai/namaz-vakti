@@ -8,8 +8,9 @@ BIN=$(swift build -c release --arch arm64 --arch x86_64 --show-bin-path)/NamazVa
 
 APP="dist/NamazVakti.app"
 rm -rf dist
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/NamazVakti"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 codesign --force --sign - "$APP"
 
