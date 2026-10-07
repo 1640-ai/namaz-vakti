@@ -67,6 +67,10 @@ Veri Diyanet İşleri Başkanlığı kaynaklıdır. Şehir ve ilçe kodları Diy
 Bu servis resmi değildir. Kapanabilir veya değişebilir. Vakitler resmi siteden farklı çıkarsa resmi site geçerlidir: https://namazvakti.diyanet.gov.tr
 Otomatik konum için `ipwho.is` servisi IP adresinden şehri bulur. Bu özellik kapalıyken konum istenmez.
 
+## Kredi
+
+Designed by [16:40](https://www.1640.com.tr/) | [Social](https://www.instagram.com/1640dijital/)
+
 ## Lisans
 
 MIT

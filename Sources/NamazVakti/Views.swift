@@ -12,6 +12,7 @@ struct AnaGorunum: View {
             konumSecimi
             Divider()
             ayarlar
+            kredi
         }
         .padding(16)
         .frame(width: 300)
@@ -94,5 +95,17 @@ struct AnaGorunum: View {
                 Button("Çıkış") { NSApplication.shared.terminate(nil) }
             }
         }
+    }
+
+    private var kredi: some View {
+        HStack(spacing: 4) {
+            Text("Designed by")
+            Link("16:40", destination: URL(string: "https://www.1640.com.tr/")!)
+            Text("|")
+            Link("Social", destination: URL(string: "https://www.instagram.com/1640dijital/")!)
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity)
     }
 }
