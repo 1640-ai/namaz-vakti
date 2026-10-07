@@ -12,8 +12,8 @@ func ciz(_ boyut: Int) -> Data {
         .draw(in: zemin, angle: -90)
 
     // Hilal: büyük daireden kaydırılmış daire çıkarılır.
-    let merkez = CGPoint(x: s * 0.46, y: s * 0.5)
-    let r = s * 0.27
+    let merkez = CGPoint(x: s * 0.46, y: s * 0.56)
+    let r = s * 0.25
     let hilal = NSBezierPath()
     hilal.windingRule = .evenOdd
     hilal.appendOval(in: NSRect(x: merkez.x - r, y: merkez.y - r, width: 2 * r, height: 2 * r))
@@ -27,7 +27,7 @@ func ciz(_ boyut: Int) -> Data {
     NSGraphicsContext.restoreGraphicsState()
 
     // Beş köşeli yıldız.
-    let yc = CGPoint(x: s * 0.62, y: s * 0.5)
+    let yc = CGPoint(x: s * 0.61, y: s * 0.56)
     let yr = s * 0.075
     let yildiz = NSBezierPath()
     for i in 0..<10 {
@@ -38,6 +38,15 @@ func ciz(_ boyut: Int) -> Data {
     }
     yildiz.close()
     yildiz.fill()
+
+    // Alt kenarda 16:40 yazısı.
+    let yazi = NSAttributedString(string: "16:40", attributes: [
+        .font: NSFont.systemFont(ofSize: s * 0.1, weight: .heavy),
+        .foregroundColor: NSColor.white,
+        .kern: s * 0.01
+    ])
+    let boy = yazi.size()
+    yazi.draw(at: NSPoint(x: (s - boy.width) / 2, y: s * 0.135))
     img.unlockFocus()
 
     let rep = NSBitmapImageRep(data: img.tiffRepresentation!)!
